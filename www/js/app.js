@@ -5,15 +5,25 @@
 // the 2nd parameter is an array of 'requires'
 'use strict';
 
-angular.module('starter', ['ionic']).run(function ($ionicPlatform) {
-  $ionicPlatform.ready(function () {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    if (window.cordova && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+angular.module('starter', ['ionic', 'firebase']).factory("Items", ["$firebaseArray", function ($firebaseArray) {
+  var itemsRef = new Firebase("https://spieletruhe.firebaseio.com/items");
+  return $firebaseArray(itemsRef);
+}]).controller('ListCtrl', function ($scope, $ionicListDelegate, Items) {
+  $scope.items = Items;
+
+  $scope.addItem = function () {
+    var name = prompt("What do want to buy?");
+    if (name) {
+      $scope.items.$add({
+        "name": name
+      });
     }
-    if (window.StatusBar) {
-      StatusBar.styleDefault();
-    }
-  });
+  };
+
+  $scope.purchaseItem = function (item) {
+    var itemRef = new Firebase("https://spieletruhe.firebaseio.com/items/" + item.$id);
+    itemRef.child("status").set("purchased");
+
+    $ionicListDelegate.closeOptionButtons();
+  };
 });
