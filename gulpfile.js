@@ -1,16 +1,16 @@
 var gulp = require('gulp');
-var gutil = require('gulp-util');
 var bower = require('bower');
-var concat = require('gulp-concat');
 var sass = require('gulp-ruby-sass');
 var minifyCss = require('gulp-minify-css');
-var rename = require('gulp-rename');
-var sh = require('shelljs');
-var babel = require("gulp-babel");
-var plumber = require("gulp-plumber");
+var browserify = require('browserify');
+var babel = require("babelify");
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+var watchify = require('watchify');
+
 
 var paths = {
-  es6: ['./src/*.js'],
+  es6: ['./src/**/*.js'],
   sass: ['./scss/**/*.scss']
 };
 
@@ -24,9 +24,11 @@ gulp.task('sass', function () {
 });
 
 gulp.task("babel", function () {
-  return gulp.src(paths.es6)
-    .pipe(plumber())
-    .pipe(babel())
+  var bundler = browserify("./src/app.js", { debug: true }).transform(babel);
+  bundler.bundle()
+    .on('error', function(err) { console.error(err); this.emit('end'); })
+    .pipe(source('app.js'))
+    .pipe(buffer())
     .pipe(gulp.dest("www/js"));
 });
 

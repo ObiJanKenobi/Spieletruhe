@@ -3,6 +3,8 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
+import ListController from './controllers/ListController';
+
 angular.module('starter', ['ionic', 'firebase'])
 
 .factory("Items", ["$firebaseArray", function ($firebaseArray) {
@@ -10,7 +12,9 @@ angular.module('starter', ['ionic', 'firebase'])
     return $firebaseArray(itemsRef);
   }])
 
-.controller('ListCtrl', function ($scope, $ionicListDelegate, Items) {
+.controller('ListCtrl', ListController)
+
+/*.controller('ListCtrl', function ($scope, $ionicListDelegate, Items) {
     $scope.items = Items;
 
     $scope.addItem = function () {
@@ -28,5 +32,4 @@ angular.module('starter', ['ionic', 'firebase'])
 
       $ionicListDelegate.closeOptionButtons();
     };
-
-})
+})*/
